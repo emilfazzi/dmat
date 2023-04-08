@@ -28,7 +28,7 @@ Dmat::Dmat(int W, int H, CRGB* leds){
 
 void Dmat::dot(int x, int y, CHSV color){
   if (checkDims(x, y)){
-    mapLEDXY(x, y, color);
+    _mat[x][y] = color;
   }else{
     //Serial.println("Error, point out of display");
   }
@@ -36,20 +36,12 @@ void Dmat::dot(int x, int y, CHSV color){
 
 void Dmat::square(int x, int y, int width, int height, CHSV color){
   for (int i = x; i < (x + width); i++){
-    if (checkDims(i, y)){
-      mapLEDXY(i, y, color);
-    }
-    if (checkDims(i, y + height)){
-      mapLEDXY(i, y + height, color);
-    }
+    dot(i, y, color);
+    dot(i, y + height, color);
   }
   for (int j = y; j <= (y + height); j++){
-    if (checkDims(x, j)){
-      mapLEDXY(x, j, color);
-    }
-    if (checkDims(x + width, j)){
-      mapLEDXY(x + width, j, color);
-    }
+    dot(x, j, color);
+    dot(x + width, j, color);
   }
 }
 
@@ -77,9 +69,7 @@ void Dmat::sphere(float x, float y, int radius, int intensity, CHSV color){
 void Dmat::squareFill(int x, int y, int width, int height, CHSV color){
   for (int i = x; i < (x + width); i++){
     for (int j = y; j < (y + height); j++){
-      if (checkDims(i, j)){
-        mapLEDXY(i, j, color);
-      }
+      dot(i, j, color);
     }
   }
 }
@@ -98,11 +88,7 @@ void Dmat::drawLetter(char letter, CHSV color){
 
 
 CRGB* Dmat::getColor(int x, int y){
-  return &_leds[getIdx(x, y)];
-}
-
-void Dmat::mapLEDXY(int x, int y, CHSV color){
-  _leds[getIdx(x, y)].setHSV(color.h, color.s, color.v);
+  return &_mat[x][y];
 }
 
 
@@ -122,4 +108,17 @@ bool Dmat::checkDims(int x, int y){
   }else{
     return false;
   }
+}
+
+void Dmat::show(){
+
+  for (int i = 0; i < _W; i++){
+    for (int j = 0; j < _H; j++){
+      CHSV pixel = _mat[i][j];
+      _leds[getIdx(i, j)].setHSV(pixel.h, pixel.s, pixel.v);
+    }
+  }
+
+  FasLED.show();
+
 }

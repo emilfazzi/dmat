@@ -17,19 +17,22 @@ class Dmat
 {
   public:
     Dmat(int W, int H, CRGB* leds);
+    void show();
     void dot(int x, int y, CHSV color);
     void square(int x, int y, int width, int height, CHSV color);
     void squareFill(int x, int y, int width, int height, CHSV color);
     void fastledInit();
     void drawLetter(char letter, CHSV color);
     void sphere(float x, float y, int radius, int intensity, CHSV color);
-    CRGB* getColor(int x, int y);
+    CHSV* getColor(int x, int y);
+    
   private:
   
     int _W;
     int _H;
 
     CRGB* _leds;
+    CHSV** _mat;
 
     bool _alphabet[26][5][3] = {
       {{0, 1, 0},   //A
@@ -190,7 +193,6 @@ class Dmat
     };
 
     bool checkDims(int x, int y);
-    void mapLEDXY(int x, int y, CHSV color);
     int getIdx(int x, int y);
 };
 
